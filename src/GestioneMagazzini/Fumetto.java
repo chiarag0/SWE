@@ -1,18 +1,20 @@
 package GestioneMagazzini;
 //TODO aggiungi codice
 
-public class Fumetto implements Elemento {
-    private String titolo;
+public class Fumetto extends Elemento {
     private String casaEditrice;
-    private float prezzo;
-    private String serie;
-    private int capitolo;
+    private final int capitolo;
 
-    public Fumetto(String titolo, String casaEditrice, float prezzo, String serie, int capitolo) {
-        this.titolo = titolo;
+
+    public int getCapitolo() {
+        return capitolo;
+    }
+
+
+    public Fumetto(String casaEditrice, float prezzo, String serie, int capitolo) {
+        super(prezzo,serie);
         this.casaEditrice = casaEditrice;
-        this.prezzo = prezzo;
-        this.serie = serie;
         this.capitolo = capitolo;
     }
+
 }

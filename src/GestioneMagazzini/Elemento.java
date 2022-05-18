@@ -1,10 +1,24 @@
 package GestioneMagazzini;
 
 //TODO fai costruttori per tutto
-//TODO le liste diventano mappe
 
-public interface Elemento {
-    public float prezzo = 0;
-    public String serie = null;
-    public int codice = 0;
+
+public abstract class Elemento {
+    private float prezzo;
+    private String serie;
+    private Key codice = null;
+
+    public Elemento(float prezzo, String serie) {
+        this.prezzo = prezzo;
+        this.serie = serie;
+    }
+    public void setCodice(Key codice) {
+        this.codice = codice;
+    }
+
+    public String getSerie() {
+        return serie;
+    }
+
+
 }

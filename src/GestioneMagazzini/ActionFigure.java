@@ -1,13 +1,16 @@
 package GestioneMagazzini;
 
-public class ActionFigure implements Elemento {
+public class ActionFigure extends Elemento {
     private String nome;
-    private float prezzo;
-    private String serie;
+    private final String size;
 
-    public ActionFigure(String nome, float prezzo, String serie) {
+    public String getSize() {
+        return size;
+    }
+
+    public ActionFigure(String nome, float prezzo, String serie, String size) {
+        super(prezzo,serie);
         this.nome = nome;
-        this.prezzo = prezzo;
-        this.serie = serie;
+        this.size = size;
     }
 }
