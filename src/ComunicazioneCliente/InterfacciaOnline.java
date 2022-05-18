@@ -8,7 +8,7 @@ public class InterfacciaOnline {
     private ArrayList<Elemento> catalogoOnline;
 
     protected void iscrizione(){
-
+     //avviene col codice serie e codice cliente
     }
 
     protected void cancellaIscrizione(){
