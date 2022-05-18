@@ -21,7 +21,7 @@ public class GestioneMagazzini extends Subject {
 
 
     public void addElemento(Elemento elemento){
-
+        elementi.put(,1);
         //TODO si aggiungono ad una mappa secondo il codice di serie
         //triggera l'update
         // 2 casi: inventario oppure prenotati

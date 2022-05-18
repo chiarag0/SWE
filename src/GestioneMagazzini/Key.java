@@ -1,14 +1,21 @@
+
 package GestioneMagazzini;
 
-public class Key {
-    private int codiceSerie;
-    private int codiceCapitolo;
-    public Key(int codiceSerie, int codiceCapitolo){
-        codiceSerie= codiceSerie;
-        codiceCapitolo= codiceCapitolo;
+public class Key implements Comparable<Key>{
+    public int codiceSerie = 0;
+    public int codiceCapitolo = 0;
+
+    public Key(int codiceSerie, int codiceCapitolo) {
+        this.codiceSerie = codiceSerie;
+        this.codiceCapitolo = codiceCapitolo;
     }
 
     public int getCodiceSerie() {
         return codiceSerie;
+    }
+
+    @Override
+    public int compareTo(Key k) {
+        return Integer.compare(codiceSerie,k.codiceSerie);
     }
 }
