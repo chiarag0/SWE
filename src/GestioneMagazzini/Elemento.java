@@ -20,5 +20,7 @@ public abstract class Elemento {
         return serie;
     }
 
-
+    public Key getCodice() {
+        return codice;
+    }
 }

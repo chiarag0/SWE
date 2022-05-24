@@ -18,6 +18,7 @@ public class GestioneMagazzini extends Subject {
     public TreeMap<String,Integer> codiceSerie = new TreeMap<>(); //TODO
     private ArrayList<Observer> observers = new ArrayList<>(); //???
     private int countSeries = 0;
+    public ArrayList<Fumetto> fumetti = new ArrayList<>();
 
 
 
@@ -33,6 +34,7 @@ public class GestioneMagazzini extends Subject {
             elementiPrenotati.put(key,elementiPrenotati.get(key)+1);
         } else elementi.put(key,elementi.get(key)+1);
         fumetto.setCodice(key);
+        fumetti.add(fumetto);
         //triggera l'update
 
     }

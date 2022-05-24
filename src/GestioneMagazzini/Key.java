@@ -14,6 +14,10 @@ public class Key implements Comparable<Key>{
         return codiceSerie;
     }
 
+    public int getCodiceCapitolo() {
+        return codiceCapitolo;
+    }
+
     @Override
     public int compareTo(Key k) {
         return Integer.compare(codiceSerie,k.codiceSerie);
