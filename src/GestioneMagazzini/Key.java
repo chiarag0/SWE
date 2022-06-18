@@ -2,24 +2,28 @@
 package GestioneMagazzini;
 
 public class Key implements Comparable<Key>{
-    public int codiceSerie = 0;
-    public int codiceCapitolo = 0;
+    public Integer codiceSerie = 0;
+    public Integer codiceCapitolo = 0;
 
-    public Key(int codiceSerie, int codiceCapitolo) {
+    public Key(Integer codiceSerie, Integer codiceCapitolo) {
         this.codiceSerie = codiceSerie;
         this.codiceCapitolo = codiceCapitolo;
     }
 
-    public int getCodiceSerie() {
+    public Integer getCodiceSerie() {
         return codiceSerie;
     }
 
-    public int getCodiceCapitolo() {
+    public Integer getCodiceCapitolo() {
         return codiceCapitolo;
     }
 
     @Override
     public int compareTo(Key k) {
-        return Integer.compare(codiceSerie,k.codiceSerie);
+        String code1 = codiceSerie.toString()+codiceCapitolo.toString();
+        String code2 = k.codiceSerie.toString()+k.codiceCapitolo.toString();
+        int codice1 = Integer.parseInt(code1);
+        int codice2 = Integer.parseInt(code2);
+        return Integer.compare(codice1,codice2);
     }
 }
