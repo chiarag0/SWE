@@ -105,7 +105,14 @@ public class GestoreForniture {
                 fumetto = f;
         }
         ordine.put(fumetto, 15);
-        ordineAF.put(actionFigure,);
+        for (int i = 997; i<1000; i++) {
+            key.codiceCapitolo = i;
+            for (ActionFigure af : gestoreMagazzini.actionFigures) {
+                if (key == af.getCodice())
+                    actionFigure = af;
+            }
+            ordineAF.put(actionFigure, 2);
+        }
     }
 
     protected void riceviOrdineFumetto(TreeMap<Fumetto,Integer> fornitura){

@@ -1,7 +1,7 @@
 package GestioneMagazzini;
 //TODO aggiungi codice
 
-public class Fumetto extends Elemento implements Comparable<Fumetto> {
+public class Fumetto extends Elemento {
     private String casaEditrice;
     private final int capitolo;
 
@@ -15,9 +15,4 @@ public class Fumetto extends Elemento implements Comparable<Fumetto> {
         return capitolo;
     }
 
-
-    @Override
-    public int compareTo(Fumetto f) {
-        return String.CASE_INSENSITIVE_ORDER.compare(getSerie(),f.getSerie());
-    }
 }

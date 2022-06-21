@@ -3,7 +3,7 @@ package GestioneMagazzini;
 //TODO fai costruttori per tutto
 
 
-public abstract class Elemento {
+public abstract class Elemento implements Comparable<Elemento> {
     private float prezzo;
     private String serie;
     private Key codice = null;
@@ -22,5 +22,10 @@ public abstract class Elemento {
 
     public Key getCodice() {
         return codice;
+    }
+
+    @Override
+    public int compareTo(Elemento e) {
+        return String.CASE_INSENSITIVE_ORDER.compare(getSerie(),e.getSerie());
     }
 }

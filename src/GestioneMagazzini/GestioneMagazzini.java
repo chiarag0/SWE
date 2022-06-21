@@ -18,7 +18,7 @@ public class GestioneMagazzini extends Subject {
     private ArrayList<Observer> observers = new ArrayList<>(); //???
     private int countSeries = 0;
     public ArrayList<Fumetto> fumetti = new ArrayList<>();
-
+    public ArrayList<ActionFigure> actionFigures = new ArrayList<>();
 
 
     public void addFumetto(Fumetto fumetto){
@@ -54,6 +54,7 @@ public class GestioneMagazzini extends Subject {
         Key key = new Key(codSerie,codSize);
         elementi.put(key,elementi.get(key)+1);
         actionFigure.setCodice(key);
+        actionFigures.add(actionFigure);
     }
 
     public void prenotaElementi(ArrayList<Key> codici, int codiceCliente){
