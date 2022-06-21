@@ -23,15 +23,16 @@ public class GestioneMagazzini extends Subject {
 
     public void addFumetto(Fumetto fumetto){
         if (codiceSerie.get(fumetto.getSerie()) == null) {
-            codiceSerie.put(fumetto.getSerie(), countSeries + 1);
+            codiceSerie.put(fumetto.getSerie(), countSeries + 50);
             countSeries++;
         }
         int codSerie = codiceSerie.get(fumetto.getSerie());
         int codCapitolo = fumetto.getCapitolo();
         Key key = new Key(codSerie,codCapitolo);
-        if (prenotazioni.containsKey(key)){
+        if (prenotazioni.get(key).size() > elementiPrenotati.get(key))
             elementiPrenotati.put(key,elementiPrenotati.get(key)+1);
-        } else elementi.put(key,elementi.get(key)+1);
+        else
+            elementi.put(key,elementi.get(key)+1);
         fumetto.setCodice(key);
         fumetti.add(fumetto);
         //triggera l'update
@@ -40,7 +41,7 @@ public class GestioneMagazzini extends Subject {
 
     public void addActionFigure(ActionFigure actionFigure){
         if (codiceSerie.get(actionFigure.getSerie()) == null) {
-            codiceSerie.put(actionFigure.getSerie(), countSeries + 1);
+            codiceSerie.put(actionFigure.getSerie(), countSeries + 50);
             countSeries++;
         }
         int codSerie = codiceSerie.get(actionFigure.getSerie());

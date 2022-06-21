@@ -1,21 +1,22 @@
-package GestoreFornitori;
+package GestoreForniture;
 
 import GestioneMagazzini.GestioneMagazzini;
 import GestioneMagazzini.Key;
 import GestioneMagazzini.Fumetto;
+import GestioneMagazzini.ActionFigure;
 
 import java.util.*;
 
-public class GestoreFornitori {
+public class GestoreForniture {
     private ArrayList<Fornitore> fornitori;
     private GestioneMagazzini gestoreMagazzini;
     private GregorianCalendar calendar = new GregorianCalendar();
     private int giorno;
     private int mese;
     private TreeMap<Fumetto, Integer> ordine = new TreeMap<>();  //una volta inviato deve cancellarsi,  metodo non implementato
-    private TreeMap<Fumetto, Integer> fornitura = new TreeMap<>();
+    private TreeMap<ActionFigure, Integer> ordineAF = new TreeMap<>();
 
-    public GestoreFornitori(ArrayList<Fornitore> fornitori, GestioneMagazzini gestoreMagazzini) {
+    public GestoreForniture(ArrayList<Fornitore> fornitori, GestioneMagazzini gestoreMagazzini) {
         this.fornitori = fornitori;
         this.gestoreMagazzini = gestoreMagazzini;
         this.giorno = calendar.get(Calendar.DATE);
@@ -81,10 +82,50 @@ public class GestoreFornitori {
         }
     }
 
-    private void riceviOrdine(TreeMap<Fumetto,Integer> fornitura){
-
+    private void ordineSpeciale(int numSerie){ // ordine in base all' interesse di fumetti e action figure
+        int numCapitolo = 0;
+        Key key = new Key(0,0);
+        key.codiceSerie=numSerie;
+        Fumetto fumetto = null;
+        ActionFigure actionFigure = null;
+        for (Key k : gestoreMagazzini.elementi.keySet()) {
+            if (numSerie == k.getCodiceSerie()) {
+                numCapitolo = 0;
+                for (Key k1 : gestoreMagazzini.elementi.keySet()) {
+                    if (numSerie == k1.getCodiceSerie()) {
+                        if (numCapitolo < k1.getCodiceCapitolo() && k1.getCodiceCapitolo() < 997) //trova l'ultimo capitolo che non è un'action figure
+                            numCapitolo = k1.getCodiceCapitolo();
+                    }
+                }
+            }
+        }
+        key.codiceCapitolo = numCapitolo;
+        for (Fumetto f : gestoreMagazzini.fumetti) {
+            if (key == f.getCodice())
+                fumetto = f;
+        }
+        ordine.put(fumetto, 15);
+        ordineAF.put(actionFigure,);
     }
 
+    protected void riceviOrdineFumetto(TreeMap<Fumetto,Integer> fornitura){
+        Set fumetti = fornitura.keySet();
+        for (Iterator i = fumetti.iterator(); i.hasNext(); ) {
+            Fumetto fumetto = (Fumetto) i.next();
+            Integer quantita = (Integer) fornitura.get(fumetto);
+            for (int j = 0; j < quantita; j++)
+                gestoreMagazzini.addFumetto(fumetto);
+        }
+    }
+    protected void riceviOrdineAF(TreeMap<ActionFigure,Integer> fornitura){
+        Set actionFigures = fornitura.keySet();
+        for (Iterator i = actionFigures.iterator(); i.hasNext(); ) {
+            ActionFigure actionFigure = (ActionFigure) i.next();
+            Integer quantita = (Integer) fornitura.get(actionFigure);
+            for (int j = 0; j < quantita; j++)
+                gestoreMagazzini.addActionFigure(actionFigure);
+        }
+    }
 
     private void riceviNotifica(){
 

@@ -1,4 +1,4 @@
-package GestoreFornitori;
+package GestoreForniture;
 
 public class Fornitore {
     private int codice;
