@@ -9,17 +9,14 @@ import java.lang.String;
 
 public class GestioneMagazzini extends Subject {
 
-
-
     public TreeMap<Key,Integer> elementi = new TreeMap<>();
     public TreeMap<Key,Integer> elementiPrenotati = new TreeMap<>(); //codice elemento e quantità, solo se disponibili
     public TreeMap<Key,ArrayList<Integer>> prenotazioni = new TreeMap<>(); //codice elemento e codici cliente, disponibili e non
-    public TreeMap<String,Integer> codiceSerie = new TreeMap<>(); //TODO
+    public TreeMap<String,Integer> codiceSerie = new TreeMap<>();
     private ArrayList<Observer> observers = new ArrayList<>(); //???
-    private int countSeries = 0;
     public ArrayList<Fumetto> fumetti = new ArrayList<>();
     public ArrayList<ActionFigure> actionFigures = new ArrayList<>();
-
+    private int countSeries = 0;
 
     public void addFumetto(Fumetto fumetto){
         if (codiceSerie.get(fumetto.getSerie()) == null) {

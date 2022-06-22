@@ -6,9 +6,15 @@ import java.util.ArrayList;
 
 public class InterfacciaOnline {
     private ArrayList<Elemento> catalogoOnline;
+    private AttivitàClienti ac;
 
-    protected void iscrizione(){
-     //avviene col codice serie e codice cliente
+    protected void subscribeMe(){
+
+    }
+
+    protected void subscribeMeSerie(){
+        //avviene col codice serie e codice cliente
+        // ac.subscribeSerie();
     }
 
     protected void cancellaIscrizione(){

@@ -93,6 +93,13 @@ public class Main {
             System.out.println(key + " = " + value);
         }
 
+        HashMap<Integer,ArrayList<Integer>> a = new HashMap<>();
+        ArrayList<Integer> aa = new ArrayList<>();
+        aa.add(2);
+        a.put(0,aa);
+        a.get(0).add(3);
+        System.out.println(a.get(0));
+
 /*
         GregorianCalendar c= new GregorianCalendar();
         System.out.println(c.get(Calendar.MONTH) +1);

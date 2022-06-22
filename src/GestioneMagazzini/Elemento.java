@@ -1,7 +1,5 @@
 package GestioneMagazzini;
 
-//TODO fai costruttori per tutto
-
 
 public abstract class Elemento implements Comparable<Elemento> {
     private float prezzo;
