@@ -1,6 +1,9 @@
 package GestioneMagazzini;
 //TODO aggiungi codice
 
+import java.util.ArrayList;
+import java.util.Observer;
+
 public class Fumetto extends Elemento {
     private String casaEditrice;
     private final int capitolo;

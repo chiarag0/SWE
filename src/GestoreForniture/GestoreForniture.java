@@ -82,7 +82,7 @@ public class GestoreForniture {
         }
     }
 
-    private void ordineSpeciale(int numSerie){ // ordine in base all' interesse di fumetti e action figure
+    public void ordineSpeciale(int numSerie){ // ordine in base all' interesse di fumetti e action figure
         int numCapitolo = 0;
         Key key = new Key(0,0);
         key.codiceSerie=numSerie;

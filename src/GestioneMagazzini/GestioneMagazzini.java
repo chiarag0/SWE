@@ -1,19 +1,17 @@
 package GestioneMagazzini;
 
+import ComunicazioneCliente.Cliente;
 
-import java.ObserverPattern.Observer;
-import java.ObserverPattern.Subject;
 import java.util.*;
 import java.lang.String;
 
 
-public class GestioneMagazzini extends Subject {
+public class GestioneMagazzini extends Observable{
 
     public TreeMap<Key,Integer> elementi = new TreeMap<>();
     public TreeMap<Key,Integer> elementiPrenotati = new TreeMap<>(); //codice elemento e quantità, solo se disponibili
-    public TreeMap<Key,ArrayList<Integer>> prenotazioni = new TreeMap<>(); //codice elemento e codici cliente, disponibili e non
+    public TreeMap<Key,ArrayList<Cliente>> prenotazioni = new TreeMap<>(); //codice elemento e codici cliente(observer), disponibili e non
     public TreeMap<String,Integer> codiceSerie = new TreeMap<>();
-    private ArrayList<Observer> observers = new ArrayList<>(); //???
     public ArrayList<Fumetto> fumetti = new ArrayList<>();
     public ArrayList<ActionFigure> actionFigures = new ArrayList<>();
     private int countSeries = 0;
@@ -30,9 +28,17 @@ public class GestioneMagazzini extends Subject {
             elementiPrenotati.put(key,elementiPrenotati.get(key)+1);
         else
             elementi.put(key,elementi.get(key)+1);
+        ArrayList<Cliente> observers = new ArrayList<>();
+        Set keys = prenotazioni.keySet();
+        for (Iterator i = keys.iterator(); i.hasNext(); ) {
+            Key chiave = (Key) i.next();
+            if (chiave == fumetto.getCodice()) {
+                observers = prenotazioni.get(key);
+            }
+        }
+        notifyObservers(observers, fumetto);
         fumetto.setCodice(key);
         fumetti.add(fumetto);
-        //triggera l'update
 
     }
 
@@ -54,32 +60,32 @@ public class GestioneMagazzini extends Subject {
         actionFigures.add(actionFigure);
     }
 
-    public void prenotaElementi(ArrayList<Key> codici, int codiceCliente){
+    public void prenotaElementi(ArrayList<Key> codici, Cliente cliente){ //add observer
        for(Key k : codici){
            if(elementi.get(k)>0){   //elemento presente e non esaurito
                elementi.computeIfPresent(k,(t,v) -> v-1);
                if(elementiPrenotati.containsKey(k)) {
                    elementiPrenotati.computeIfPresent(k, (t,v) -> v + 1);
-                   ArrayList<Integer> tmp = prenotazioni.get(k);
-                   tmp.add(codiceCliente);
+                   ArrayList<Cliente> tmp = prenotazioni.get(k);
+                   tmp.add(cliente);
                    prenotazioni.put(k,tmp);
                }
                else{
                    elementiPrenotati.put(k,1);
-                   ArrayList<Integer> tmp = new ArrayList<>();
-                   tmp.add(codiceCliente);
+                   ArrayList<Cliente> tmp = new ArrayList<>();
+                   tmp.add(cliente);
                    prenotazioni.put(k,tmp);
                }
            }
            else{    //elemento non presente
                if(prenotazioni.containsKey(k)) {
-                   ArrayList<Integer> tmp = prenotazioni.get(k);
-                   tmp.add(codiceCliente);
+                   ArrayList<Cliente> tmp = prenotazioni.get(k);
+                   tmp.add(cliente);
                    prenotazioni.put(k,tmp);
                }
                else{
-                   ArrayList<Integer> tmp = new ArrayList<>();
-                   tmp.add(codiceCliente);
+                   ArrayList<Cliente> tmp = new ArrayList<>();
+                   tmp.add(cliente);
                    prenotazioni.put(k,tmp);
                }
            }
@@ -87,19 +93,9 @@ public class GestioneMagazzini extends Subject {
 
     }
 
-    @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (Observer observer : observers)
-            observer.update();
+    public void notifyObservers(ArrayList<Cliente> observers, Fumetto fumetto) {
+        for(Observer o: observers) {
+            o.update(this,fumetto);
+        }
     }
 }

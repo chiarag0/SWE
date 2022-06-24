@@ -8,7 +8,7 @@ public class InterfacciaOnline {
     private ArrayList<Elemento> catalogoOnline;
     private AttivitàClienti ac;
 
-    protected void subscribeMe(){
+    public void subscribeMe(){
 
     }
 
