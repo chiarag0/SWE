@@ -1,5 +1,6 @@
 package ComunicazioneCliente;
 
+import SendEmail.SendEmail;
 import StockManagement.StockManager;
 import StockManagement.Key;
 import SuppliesManagement.SuppliesManager;
@@ -22,6 +23,7 @@ public class AttivitàClienti {
         clientIscritti.add(c);
         numClienti++;
         c.setCodice(numClienti);
+        SendEmail.send("BENVENUTO NELLA COMUNITY!!","Ciao "+ c.getNome() + ", confermiamo la tua iscrizione che ti consentirà di diventare un cliente premium, prenotare qualsiasi prodotto e resterai sempre aggiornato dulle novità!");
     }
 
     public void subscribeSerie(Cliente c,Integer codiceSerie){

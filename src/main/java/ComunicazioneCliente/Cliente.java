@@ -1,5 +1,6 @@
 package ComunicazioneCliente;
 
+import SendEmail.SendEmail;
 import StockManagement.Fumetto;
 import StockManagement.Key;
 
@@ -44,6 +45,10 @@ public class Cliente implements Comparable<Cliente>,Observer{
         this.codice = codice;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
     @Override
     public int compareTo(Cliente c) {
         return Integer.compare(codice,c.codice);
@@ -67,7 +72,7 @@ public class Cliente implements Comparable<Cliente>,Observer{
             }
         }
         if(!flag){
-            //invia email
+            SendEmail.send("AVAILABLE PRODUCT!!","Ciao "+ this.nome + ", li oggetti da lei prenotati sono disponibili per il ritiro in negozio");
         }
     }
 }
