@@ -16,6 +16,14 @@ public class StockManager extends Observable{
     private int countSeries ;
     private static StockManager instance = null;
 
+    public int getCountSeries() {
+        return countSeries;
+    }
+
+    public void setCountSeries() {
+        this.countSeries += 50;
+    }
+
     private StockManager() {
         this.countSeries = 0;
     }
@@ -30,10 +38,6 @@ public class StockManager extends Observable{
     }
 
     public void addFumetto(Fumetto fumetto){
-        if (codiceSerie.get(fumetto.getSerie()) == null) {
-            codiceSerie.put(fumetto.getSerie(), countSeries + 50);
-            countSeries++;
-        }
         int codSerie = codiceSerie.get(fumetto.getSerie());
         int codCapitolo = fumetto.getCapitolo();
         Key key = new Key(codSerie,codCapitolo);
@@ -104,6 +108,10 @@ public class StockManager extends Observable{
            }
        }
 
+    }
+
+    public void soldElement(Key codiceElemento){
+        elementi.put(codiceElemento, elementi.get(codiceElemento)-1);
     }
 
     public void notifyObservers(ArrayList<Cliente> observers, Fumetto fumetto) {

@@ -25,6 +25,10 @@ public class Cliente implements Comparable<Cliente>,Observer{
         interestSeries = new ArrayList<Integer>();
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setPremium(Boolean premium) {
         this.premium = premium;
     }
@@ -33,8 +37,8 @@ public class Cliente implements Comparable<Cliente>,Observer{
         return acquisti;
     }
 
-    public void setAcquisti(int acquisti) {
-        this.acquisti = acquisti;
+    public void setAcquisti() {
+        this.acquisti ++;
     }
 
     public int getCodice() {
@@ -72,7 +76,7 @@ public class Cliente implements Comparable<Cliente>,Observer{
             }
         }
         if(!flag){
-            SendEmail.send("AVAILABLE PRODUCT!!","Ciao "+ this.nome + ", li oggetti da lei prenotati sono disponibili per il ritiro in negozio");
+            SendEmail.send("AVAILABLE PRODUCT!!","Ciao "+ this.nome + ", gli oggetti da lei prenotati sono disponibili per il ritiro in negozio", email);
         }
     }
 }

@@ -1,5 +1,6 @@
 package SuppliesManagement;
 
+import SendEmail.SendEmail;
 import StockManagement.StockManager;
 import StockManagement.Key;
 import StockManagement.Fumetto;
@@ -79,6 +80,11 @@ public class SuppliesManager {
                 }
 
             }
+            Key key = new Key(numSerie,numCapitolo + 1);
+            if(Math.random() > 0.5){
+                stockManager.elementi.put(key,0);
+               // SendEmail.send("USCITA NUOVO CAPITOLO!", "E' uscito un nuovo capitolo di " ); aggiungere titolo
+            }
         }
     }
 
@@ -134,7 +140,10 @@ public class SuppliesManager {
         }
     }
 
-    private void riceviNotifica(){
-
+    private void riceviNotifica(String titoloSerie){
+        stockManager.setCountSeries();
+        stockManager.codiceSerie.put(titoloSerie, stockManager.getCountSeries());
+        Key key = new Key(stockManager.getCountSeries(), 1);
+        stockManager.elementi.put(key, 0);
     }
 }

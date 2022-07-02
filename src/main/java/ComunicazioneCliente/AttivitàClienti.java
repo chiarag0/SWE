@@ -23,7 +23,7 @@ public class AttivitàClienti {
         clientIscritti.add(c);
         numClienti++;
         c.setCodice(numClienti);
-        SendEmail.send("BENVENUTO NELLA COMUNITY!!","Ciao "+ c.getNome() + ", confermiamo la tua iscrizione che ti consentirà di diventare un cliente premium, prenotare qualsiasi prodotto e resterai sempre aggiornato dulle novità!");
+        SendEmail.send("BENVENUTO NELLA COMUNITY!!","Ciao "+ c.getNome() + ", confermiamo la tua iscrizione che ti consentirà di diventare un cliente premium, prenotare qualsiasi prodotto e resterai sempre aggiornato dulle novità!", c.getEmail());
     }
 
     public void subscribeSerie(Cliente c,Integer codiceSerie){
@@ -49,5 +49,15 @@ public class AttivitàClienti {
         magazzino.prenotaElementi(codici, cliente);
     }
 
+    public void soldElement(Key codiceElemento, int codice, Boolean subscribed){
+          magazzino.soldElement( codiceElemento);
+          if(subscribed){
+              for(Cliente c: clientIscritti) {
+                  if(codice == c.getCodice())
+                    c.setAcquisti();
+              }
+          }
+
+    }
 
 }
