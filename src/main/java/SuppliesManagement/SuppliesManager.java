@@ -1,6 +1,7 @@
 package SuppliesManagement;
 
-import SendEmail.SendEmail;
+import ComunicazioneCliente.AttivitàClienti;
+import ComunicazioneCliente.Cliente;
 import StockManagement.StockManager;
 import StockManagement.Key;
 import StockManagement.Fumetto;
@@ -8,17 +9,22 @@ import StockManagement.ActionFigure;
 
 import java.util.*;
 
-public class SuppliesManager {
-    private ArrayList<Fornitore> fornitori;
+public class SuppliesManager extends Observable{
     private StockManager stockManager;
     private GregorianCalendar calendar = new GregorianCalendar();
     private int giorno;
     private int mese;
     private TreeMap<Fumetto, Integer> ordine = new TreeMap<>();  //una volta inviato deve cancellarsi,  metodo non implementato
     private TreeMap<ActionFigure, Integer> ordineAF = new TreeMap<>();
+    public TreeMap<Integer, ArrayList<Cliente>> iscrizioni = new TreeMap<>();
 
-    public SuppliesManager(ArrayList<Fornitore> fornitori, StockManager stockManager) {
-        this.fornitori = fornitori;
+    public SuppliesManager(AttivitàClienti ac) {
+        this.ac = ac;
+    }
+
+    private AttivitàClienti ac;
+
+    public SuppliesManager(StockManager stockManager) {
         this.stockManager = stockManager;
         this.giorno = calendar.get(Calendar.DATE);
         this.mese = calendar.get(Calendar.MONTH) + 1;
@@ -83,7 +89,15 @@ public class SuppliesManager {
             Key key = new Key(numSerie,numCapitolo + 1);
             if(Math.random() > 0.5){
                 stockManager.elementi.put(key,0);
-               // SendEmail.send("USCITA NUOVO CAPITOLO!", "E' uscito un nuovo capitolo di " ); aggiungere titolo
+                ArrayList<Cliente> observers = new ArrayList<>();
+                Set keys = iscrizioni.keySet();
+                for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                    Key chiave = (Key) i.next();
+                    if (chiave == fumetto.getCodice()) {
+                        observers = iscrizioni.get(key);
+                    }
+                }
+                notifyObservers(observers, numSerie);
             }
         }
     }
@@ -125,7 +139,7 @@ public class SuppliesManager {
         Set fumetti = fornitura.keySet();
         for (Iterator i = fumetti.iterator(); i.hasNext(); ) {
             Fumetto fumetto = (Fumetto) i.next();
-            Integer quantita = (Integer) fornitura.get(fumetto);
+            Integer quantita = fornitura.get(fumetto);
             for (int j = 0; j < quantita; j++)
                 stockManager.addFumetto(fumetto);
         }
@@ -145,5 +159,20 @@ public class SuppliesManager {
         stockManager.codiceSerie.put(titoloSerie, stockManager.getCountSeries());
         Key key = new Key(stockManager.getCountSeries(), 1);
         stockManager.elementi.put(key, 0);
+        ac.notifyNewSeries(titoloSerie);
+    }
+
+    public void notifyObservers(ArrayList<Cliente> observers, int numSerie) {
+        String titoloSerie = null;
+        Set keys = stockManager.codiceSerie.keySet();
+        for (Iterator i = keys.iterator(); i.hasNext(); ) {
+            String titolo = (String) i.next();
+            if (numSerie == stockManager.codiceSerie.get(titolo)) {
+                titoloSerie = titolo;
+            }
+        }
+        for(Observer o: observers) {
+            o.update(this, titoloSerie);
+        }
     }
 }

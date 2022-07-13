@@ -9,14 +9,16 @@ import java.util.HashMap;
 
 public class AttivitàClienti {
     public ArrayList<Cliente> clientIscritti = new ArrayList<>();
-    private HashMap<Integer, Integer> interesse = new HashMap<>();
+    private HashMap<Integer, Integer> interesse = new HashMap<>(); // codice serie valore di interesse
     private int numClienti = 0;
     private StockManager magazzino;
     private SuppliesManager fornitore;
+    private InterfacciaOnline onlineInterface;
 
-    public AttivitàClienti(StockManager magazzino, SuppliesManager fornitore) {
+    public AttivitàClienti(StockManager magazzino, SuppliesManager fornitore,InterfacciaOnline onlineInterface) {
         this.fornitore = fornitore;
         this.magazzino = magazzino;
+        this.onlineInterface= onlineInterface;
     }
 
     public void subscribe(Cliente c){
@@ -26,10 +28,32 @@ public class AttivitàClienti {
         SendEmail.send("BENVENUTO NELLA COMUNITY!!","Ciao "+ c.getNome() + ", confermiamo la tua iscrizione che ti consentirà di diventare un cliente premium, prenotare qualsiasi prodotto e resterai sempre aggiornato dulle novità!", c.getEmail());
     }
 
-    public void subscribeSerie(Cliente c,Integer codiceSerie){
+    public void unsubscribe(Cliente c){
         for (Cliente c1: clientIscritti) {
             if(c == c1)
-                c1.interestSeries.add(codiceSerie);
+                clientIscritti.remove(c);
+        }
+    }
+
+    public void subscribeSerie(Cliente c,Integer codiceSerie){
+        ArrayList<Cliente> clienti;
+        for (Cliente c1: clientIscritti) {
+            if (c == c1){
+                clienti = fornitore.iscrizioni.get(codiceSerie);
+                clienti.add(c);
+                fornitore.iscrizioni.put(codiceSerie, clienti);
+            }
+        }
+    }
+
+    public void unsubscribeSerie(Cliente c,Integer codiceSerie){
+        ArrayList<Cliente> clienti;
+        for (Cliente c1: clientIscritti) {
+            if (c == c1){
+                clienti = fornitore.iscrizioni.get(codiceSerie);
+                clienti.remove(c);
+                fornitore.iscrizioni.put(codiceSerie, clienti);
+            }
         }
     }
 
@@ -40,12 +64,11 @@ public class AttivitàClienti {
         else
             tmp = interesse.get(codiceSerie) + 1;
         interesse.put(codiceSerie, tmp);
-        if(interesse.get(codiceSerie) >= 15){
+        if(interesse.get(codiceSerie) >= 15)
             fornitore.ordineSpeciale(codiceSerie);
-        }
     }
 
-    private void bookingElement(Cliente cliente, ArrayList<Key> codici){
+    public void bookingElement(Cliente cliente, ArrayList<Key> codici){
         magazzino.prenotaElementi(codici, cliente);
     }
 
@@ -58,6 +81,12 @@ public class AttivitàClienti {
               }
           }
 
+    }
+
+    public void notifyNewSeries(String titoloSerie){
+        for(Cliente c:clientIscritti){
+            SendEmail.send("NUOVA SERIE DISPONIBILE!!", titoloSerie+" presto disponibile", c.getEmail());
+        }
     }
 
 }

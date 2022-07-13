@@ -29,7 +29,7 @@ public class Cassa {
         if(codiceCliente > 0){
             for (Cliente c: ac.clientIscritti) {
                 if(c.getCodice() == codiceCliente)
-                    c.setAcquisti(c.getAcquisti() + 1);
+                    c.setAcquisti();
                 if(c.getAcquisti() == 100)
                     c.setPremium(Boolean.TRUE);
             }

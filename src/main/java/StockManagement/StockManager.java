@@ -55,8 +55,8 @@ public class StockManager extends Observable{
         }
         notifyObservers(observers, fumetto);
         fumetto.setCodice(key);
-        fumetti.add(fumetto);
-
+        if(fumetti.contains(fumetto))
+            fumetti.add(fumetto);
     }
 
     public void addActionFigure(ActionFigure actionFigure){
@@ -109,6 +109,7 @@ public class StockManager extends Observable{
        }
 
     }
+
 
     public void soldElement(Key codiceElemento){
         elementi.put(codiceElemento, elementi.get(codiceElemento)-1);
