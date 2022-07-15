@@ -10,26 +10,33 @@ import StockManagement.ActionFigure;
 import java.util.*;
 
 public class SuppliesManager extends Observable{
-    private StockManager stockManager;
-    private GregorianCalendar calendar = new GregorianCalendar();
-    private int giorno;
-    private int mese;
-    private TreeMap<Fumetto, Integer> ordine = new TreeMap<>();  //una volta inviato deve cancellarsi,  metodo non implementato
+  //  private GregorianCalendar calendar = new GregorianCalendar();
+  //  private int giorno;
+  //  private int mese;
+    TreeMap<Fumetto, Integer> ordine = new TreeMap<>();  //una volta inviato deve cancellarsi,  metodo non implementato
     private TreeMap<ActionFigure, Integer> ordineAF = new TreeMap<>();
     public TreeMap<Integer, ArrayList<Cliente>> iscrizioni = new TreeMap<>();
+    public AttivitàClienti ac ;
+    public StockManager stockManager = StockManager.getInstance();
+    private static SuppliesManager instance = null;
+    private ConcreteFactory factory;
 
-    public SuppliesManager(AttivitàClienti ac) {
+    private SuppliesManager(AttivitàClienti ac) {
         this.ac = ac;
+        factory = new ConcreteFactory(this);
+        //this.giorno = calendar.get(Calendar.DATE);
+       // this.mese = calendar.get(Calendar.MONTH) + 1;
     }
 
-    private AttivitàClienti ac;
-
-    public SuppliesManager(StockManager stockManager) {
-        this.stockManager = stockManager;
-        this.giorno = calendar.get(Calendar.DATE);
-        this.mese = calendar.get(Calendar.MONTH) + 1;
+    static public SuppliesManager getInstance(AttivitàClienti ac) {
+        if (instance != null)
+            return instance;
+        else {
+            instance = new SuppliesManager(ac);
+            return instance;
+        }
     }
-
+/*
     private void controllaGiorno() {
         if (mese == (calendar.get(Calendar.MONTH) + 1)) {
             if (giorno - (calendar.get(Calendar.DATE)) >= 7)
@@ -53,11 +60,14 @@ public class SuppliesManager extends Observable{
     }
 
 
-    private void ordinaDaFornitore() { //ordine periodico
+ */
+    void ordinaDaFornitore() { //ordine periodico
+        String serie = "";
         int numCapitolo = 0;
         int quantità = 0;
         Fumetto fumetto = null;
-        for (int numSerie = 1; numSerie < 9999; numSerie++) {
+        ordine.clear();
+        for (int numSerie = 50; numSerie < 10000; numSerie += 50) {
             for (Key k : stockManager.elementi.keySet()) {
                 if (numSerie == k.getCodiceSerie()) {
                     numCapitolo = 0;
@@ -67,7 +77,6 @@ public class SuppliesManager extends Observable{
                                 numCapitolo = k1.getCodiceCapitolo();
                         }
                     }
-
                     int dist = numCapitolo - k.getCodiceCapitolo();
                     if (dist <= 10)
                         quantità = 10;
@@ -77,8 +86,10 @@ public class SuppliesManager extends Observable{
                         quantità = 3;
 
                     for (Fumetto f : stockManager.fumetti) {
-                        if (k == f.getCodice())
+                        if (k == f.getCodice()) {
                             fumetto = f;
+                            serie = f.getSerie();
+                        }
                     }
                     if (stockManager.elementi.get(k) < 3 && k.getCodiceCapitolo() < 997) {
                         ordine.put(fumetto, quantità);
@@ -86,26 +97,28 @@ public class SuppliesManager extends Observable{
                 }
 
             }
+            //invia ordine a fornitore
             Key key = new Key(numSerie,numCapitolo + 1);
             if(Math.random() > 0.5){
                 stockManager.elementi.put(key,0);
+                factory.creaElemento(true,false,true,"","Panini",4,serie, key.getCodiceCapitolo(),false,"", 0);
                 ArrayList<Cliente> observers = new ArrayList<>();
                 Set keys = iscrizioni.keySet();
                 for (Iterator i = keys.iterator(); i.hasNext(); ) {
-                    Key chiave = (Key) i.next();
-                    if (chiave == fumetto.getCodice()) {
-                        observers = iscrizioni.get(key);
+                    int chiave = (int) i.next();
+                    if (chiave == (fumetto.getCodice().getCodiceSerie())){
+                        observers = iscrizioni.get(key.getCodiceSerie());
                     }
                 }
-                notifyObservers(observers, numSerie);
+                if(observers != null)
+                    notifyObservers(observers, numSerie);
             }
         }
     }
 
     public void ordineSpeciale(int numSerie){ // ordine in base all' interesse di fumetti e action figure
         int numCapitolo = 0;
-        Key key = new Key(0,0);
-        key.codiceSerie=numSerie;
+        Key key = new Key(numSerie,0);
         Fumetto fumetto = null;
         ActionFigure actionFigure = null;
         for (Key k : stockManager.elementi.keySet()) {
@@ -119,14 +132,14 @@ public class SuppliesManager extends Observable{
                 }
             }
         }
-        key.codiceCapitolo = numCapitolo;
+        key.setCodiceCapitolo(numCapitolo);
         for (Fumetto f : stockManager.fumetti) {
             if (key == f.getCodice())
                 fumetto = f;
         }
         ordine.put(fumetto, 15);
         for (int i = 997; i<1000; i++) {
-            key.codiceCapitolo = i;
+            key.setCodiceCapitolo(i);
             for (ActionFigure af : stockManager.actionFigures) {
                 if (key == af.getCodice())
                     actionFigure = af;
@@ -135,7 +148,7 @@ public class SuppliesManager extends Observable{
         }
     }
 
-    protected void riceviOrdineFumetto(TreeMap<Fumetto,Integer> fornitura){
+    protected void riceviOrdineFumetto(TreeMap<Fumetto,Integer> fornitura) {
         Set fumetti = fornitura.keySet();
         for (Iterator i = fumetti.iterator(); i.hasNext(); ) {
             Fumetto fumetto = (Fumetto) i.next();
@@ -144,11 +157,12 @@ public class SuppliesManager extends Observable{
                 stockManager.addFumetto(fumetto);
         }
     }
+
     protected void riceviOrdineAF(TreeMap<ActionFigure,Integer> fornitura){
         Set actionFigures = fornitura.keySet();
         for (Iterator i = actionFigures.iterator(); i.hasNext(); ) {
             ActionFigure actionFigure = (ActionFigure) i.next();
-            Integer quantita = (Integer) fornitura.get(actionFigure);
+            Integer quantita = fornitura.get(actionFigure);
             for (int j = 0; j < quantita; j++)
                 stockManager.addActionFigure(actionFigure);
         }

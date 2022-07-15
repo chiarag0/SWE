@@ -24,6 +24,10 @@ public abstract class Elemento implements Comparable<Elemento> {
 
     @Override
     public int compareTo(Elemento e) {
-        return String.CASE_INSENSITIVE_ORDER.compare(getSerie(),e.getSerie());
+        String a = Integer.toString(codice.getCodiceCapitolo());
+        String b = serie+a;
+        String a1 = Integer.toString(e.getCodice().getCodiceCapitolo());
+        String b1 = e.getSerie()+a1;
+        return String.CASE_INSENSITIVE_ORDER.compare(b,b1);
     }
 }

@@ -9,17 +9,17 @@ import java.util.HashMap;
 
 public class AttivitàClienti {
     public ArrayList<Cliente> clientIscritti = new ArrayList<>();
-    private HashMap<Integer, Integer> interesse = new HashMap<>(); // codice serie valore di interesse
-    private int numClienti = 0;
-    private StockManager magazzino;
-    private SuppliesManager fornitore;
-    private InterfacciaOnline onlineInterface;
+    private final HashMap<Integer, Integer> interesse = new HashMap<>(); // codice serie valore di interesse
+    private int numClienti;
+    private final StockManager magazzino=  StockManager.getInstance();
+    private final SuppliesManager fornitore =  SuppliesManager.getInstance(this);
+    private static AttivitàClienti instance = null;
 
-    public AttivitàClienti(StockManager magazzino, SuppliesManager fornitore,InterfacciaOnline onlineInterface) {
-        this.fornitore = fornitore;
-        this.magazzino = magazzino;
-        this.onlineInterface= onlineInterface;
+    public AttivitàClienti() {
+        numClienti = 0;
     }
+
+
 
     public void subscribe(Cliente c){
         clientIscritti.add(c);

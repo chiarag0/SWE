@@ -16,14 +16,6 @@ public class StockManager extends Observable{
     private int countSeries ;
     private static StockManager instance = null;
 
-    public int getCountSeries() {
-        return countSeries;
-    }
-
-    public void setCountSeries() {
-        this.countSeries += 50;
-    }
-
     private StockManager() {
         this.countSeries = 0;
     }
@@ -37,49 +29,78 @@ public class StockManager extends Observable{
         }
     }
 
+    public int getCountSeries() {
+        return countSeries;
+    }
+
+    public void setCountSeries() {
+        this.countSeries += 50;
+    }
+
     public void addFumetto(Fumetto fumetto){
-        int codSerie = codiceSerie.get(fumetto.getSerie());
+        int codSerie;
         int codCapitolo = fumetto.getCapitolo();
-        Key key = new Key(codSerie,codCapitolo);
-        if (prenotazioni.get(key).size() > elementiPrenotati.get(key))
-            elementiPrenotati.put(key,elementiPrenotati.get(key)+1);
-        else
-            elementi.put(key,elementi.get(key)+1);
-        ArrayList<Cliente> observers = new ArrayList<>();
-        Set keys = prenotazioni.keySet();
-        for (Iterator i = keys.iterator(); i.hasNext(); ) {
-            Key chiave = (Key) i.next();
-            if (chiave == fumetto.getCodice()) {
-                observers = prenotazioni.get(key);
+        if (!codiceSerie.containsKey(fumetto.getSerie())) {
+            codiceSerie.put(fumetto.getSerie(), countSeries + 50);
+            countSeries += 50;
+        }
+        codSerie = codiceSerie.get(fumetto.getSerie());
+        Key key = new Key(codSerie, codCapitolo);
+        fumetto.setCodice(key);
+        if (!prenotazioni.containsKey(key) && !elementiPrenotati.containsKey(key) || prenotazioni.get(key).size()==0) {
+            if(elementi.containsKey(key))
+                elementi.put(key, elementi.get(key) + 1);
+            else elementi.put(key, 1);
+        }else{
+            if(!elementiPrenotati.containsKey(key) || prenotazioni.get(key).size() > elementiPrenotati.get(key)){
+                if(!elementiPrenotati.containsKey(key))
+                    elementiPrenotati.put(key, 1);
+                else
+                    elementiPrenotati.put(key, elementiPrenotati.get(key)+1);
+                if(prenotazioni.get(key).size() == elementiPrenotati.get(key)){
+                    ArrayList<Cliente> observers = new ArrayList<>();
+                    Set keys = prenotazioni.keySet();
+                    for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                        Key chiave = (Key) i.next();
+                        if (chiave.equals(fumetto.getCodice()))
+                            observers = prenotazioni.get(key);
+                    }
+                    notifyObservers(observers, fumetto);
+                }
+            }
+            else {
+                if(elementi.containsKey(key))
+                    elementi.put(key, elementi.get(key) + 1);
+                else elementi.put(key, 1);
             }
         }
-        notifyObservers(observers, fumetto);
-        fumetto.setCodice(key);
-        if(fumetti.contains(fumetto))
+        boolean match = Boolean.FALSE;
+        for (Fumetto f : fumetti) {
+            if (fumetto.getCodice().equals(f.getCodice())) {
+                match = Boolean.TRUE;
+                break;
+            }
+        }
+        if(!match)
             fumetti.add(fumetto);
     }
 
     public void addActionFigure(ActionFigure actionFigure){
         if (codiceSerie.get(actionFigure.getSerie()) == null) {
             codiceSerie.put(actionFigure.getSerie(), countSeries + 50);
-            countSeries++;
+            countSeries += 50;
         }
-        int codSerie = codiceSerie.get(actionFigure.getSerie());
-        String size = actionFigure.getSize();
-        int codSize = 998;
-        switch (size) {
-            case "small" -> codSize = 999;
-            case "large" -> codSize = 997;
-        }
-        Key key = new Key(codSerie,codSize);
-        elementi.put(key,elementi.get(key)+1);
-        actionFigure.setCodice(key);
+        if(elementi.containsKey(actionFigure.getCodice()))
+            elementi.put(actionFigure.getCodice(),elementi.get(actionFigure.getCodice())+1);
+        else
+            elementi.put(actionFigure.getCodice(),1);
         actionFigures.add(actionFigure);
     }
 
-    public void prenotaElementi(ArrayList<Key> codici, Cliente cliente){ //add observer
+    public void prenotaElementi(ArrayList<Key> codici, Cliente cliente){
        for(Key k : codici){
            if(elementi.get(k)>0){   //elemento presente e non esaurito
+               cliente.prenotazioni.put(k, Boolean.TRUE);
                elementi.computeIfPresent(k,(t,v) -> v-1);
                if(elementiPrenotati.containsKey(k)) {
                    elementiPrenotati.computeIfPresent(k, (t,v) -> v + 1);
@@ -95,6 +116,7 @@ public class StockManager extends Observable{
                }
            }
            else{    //elemento non presente
+               cliente.prenotazioni.put(k, Boolean.FALSE);
                if(prenotazioni.containsKey(k)) {
                    ArrayList<Cliente> tmp = prenotazioni.get(k);
                    tmp.add(cliente);
@@ -119,5 +141,9 @@ public class StockManager extends Observable{
         for(Observer o: observers) {
             o.update(this,fumetto);
         }
+    }
+
+    public void addNew(Fumetto fumetto) {
+        fumetti.add(fumetto);
     }
 }

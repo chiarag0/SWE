@@ -2,11 +2,15 @@
 package StockManagement;
 
 public class Key implements Comparable<Key>{
-    public Integer codiceSerie = 0;
-    public Integer codiceCapitolo = 0;
+    private int codiceSerie = 0;
+    private int codiceCapitolo = 0;
 
-    public Key(Integer codiceSerie, Integer codiceCapitolo) {
+    public Key(int codiceSerie, int codiceCapitolo) {
         this.codiceSerie = codiceSerie;
+        this.codiceCapitolo = codiceCapitolo;
+    }
+
+    public void setCodiceCapitolo(int codiceCapitolo) {
         this.codiceCapitolo = codiceCapitolo;
     }
 
@@ -20,10 +24,23 @@ public class Key implements Comparable<Key>{
 
     @Override
     public int compareTo(Key k) {
-        String code1 = codiceSerie.toString()+codiceCapitolo.toString();
-        String code2 = k.codiceSerie.toString()+k.codiceCapitolo.toString();
-        int codice1 = Integer.parseInt(code1);
-        int codice2 = Integer.parseInt(code2);
-        return Integer.compare(codice1,codice2);
+        String a = Integer.toString(codiceSerie);
+        String b = Integer.toString(codiceCapitolo);
+        String c = a + b;
+        String a1 = Integer.toString(k.getCodiceSerie());
+        String b1 = Integer.toString(k.getCodiceCapitolo());
+        String c1 = a1 + b1;
+        return String.CASE_INSENSITIVE_ORDER.compare(c,c1);
     }
+
+    @Override
+    public boolean equals(Object o){
+        Key k = (Key) o;
+        if(this.codiceSerie == k.getCodiceSerie() && this.codiceCapitolo == k.getCodiceCapitolo() )
+            return true;
+        else return false;
+
+    }
+
+
 }

@@ -14,7 +14,7 @@ public class Cliente implements Comparable<Cliente>,Observer{
     private int codice;
     private Boolean premium = Boolean.FALSE;
     private int acquisti = 0;
-    private HashMap<Key, Boolean> prenotazioni = new HashMap<>();
+    public HashMap<Key, Boolean> prenotazioni = new HashMap<>();
 
     public Cliente(String nome, String cognome, String email, int codice) {
         this.nome = nome;
@@ -64,7 +64,7 @@ public class Cliente implements Comparable<Cliente>,Observer{
             Set keys = prenotazioni.keySet();
             for (Iterator i = keys.iterator(); i.hasNext(); ) {
                 Key chiave = (Key) i.next();
-                if (chiave == fumetto.getCodice()) {
+                if (chiave.equals(fumetto.getCodice())) {
                     prenotazioni.put(chiave, Boolean.TRUE);
                 }
             }

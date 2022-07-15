@@ -17,7 +17,7 @@ public class Main {
         TreeMap<Key, Integer> elementi = new TreeMap<>();
         Key k14 = new Key(8800, 002);
         Key kk = new Key(5390, 201);
-        Key kkk = new Key(2232, 394);
+        Key kkk = new Key(5390, 201);
         Key k13 = new Key(8800, 003);
         Key k2 = new Key(2235, 327);
         Key k3 = new Key(2232, 122);
@@ -30,7 +30,6 @@ public class Main {
         Key k10 = new Key(2232, 234);
         Key k11 = new Key(2232, 342);
         Key k12 = new Key(2232, 123);
-
         elementi.put(k14, 2);
         elementi.put(kk, 2);
         elementi.put(kkk, 2);
@@ -52,7 +51,7 @@ public class Main {
         System.out.println(a);
        System.out.println(elementi.get(kk));
 */
-        /*
+
 
         TreeMap<Key, Integer> ordine = new TreeMap<>();
 
@@ -103,7 +102,7 @@ public class Main {
         a.put(0,aa);
         a.get(0).add(3);
         System.out.println(a.get(0));
-*/
+
 /*
         GregorianCalendar c= new GregorianCalendar();
         System.out.println(c.get(Calendar.MONTH) +1);
