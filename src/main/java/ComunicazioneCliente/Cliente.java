@@ -82,5 +82,4 @@ public class Cliente implements Comparable<Cliente>,Observer{
             SendEmail.send("NUOVO CAPITOLO!!", "Ciao " + this.nome + ", è uscito un nuovo capitolo della serie " + titolo, email);
         }
     }
-
 }

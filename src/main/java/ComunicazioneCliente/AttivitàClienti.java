@@ -30,7 +30,7 @@ public class AttivitàClienti {
 
     public void unsubscribe(Cliente c){
         for (Cliente c1: clientIscritti) {
-            if(c == c1)
+            if(c.getEmail()==c1.getEmail())
                 clientIscritti.remove(c);
         }
     }

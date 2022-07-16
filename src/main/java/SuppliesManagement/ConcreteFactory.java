@@ -24,7 +24,10 @@ public class ConcreteFactory extends EFactory {
             prezzo = (float) (costo * 1.50);
         else
             prezzo = (float) (costo * 1.40);
-
+        if (!magazzino.codiceSerie.containsKey(serie)) {
+            magazzino.codiceSerie.put(serie, magazzino.getCountSeries() + 50);
+            magazzino.setCountSeries();
+        }
         if (tipo) {
             Key codice = new Key(magazzino.codiceSerie.get(serie),capitolo);
             Fumetto fumetto = new Fumetto(casaEditrice, prezzo, serie, capitolo);

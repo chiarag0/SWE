@@ -23,14 +23,19 @@ public class Key implements Comparable<Key>{
     }
 
     @Override
-    public int compareTo(Key k) {
-        String a = Integer.toString(codiceSerie);
-        String b = Integer.toString(codiceCapitolo);
-        String c = a + b;
-        String a1 = Integer.toString(k.getCodiceSerie());
-        String b1 = Integer.toString(k.getCodiceCapitolo());
-        String c1 = a1 + b1;
-        return String.CASE_INSENSITIVE_ORDER.compare(c,c1);
+    public int compareTo(Key k) throws NullPointerException {
+        try {
+            String a = Integer.toString(codiceSerie);
+            String b = Integer.toString(codiceCapitolo);
+            String c = a + b;
+            String a1 = Integer.toString(k.getCodiceSerie());
+            String b1 = Integer.toString(k.getCodiceCapitolo());
+            String c1 = a1 + b1;
+            return String.CASE_INSENSITIVE_ORDER.compare(c, c1);
+        }catch (NullPointerException e){
+            System.out.println("chiave nulla");
+            return 0;
+        }
     }
 
     @Override

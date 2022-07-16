@@ -61,7 +61,7 @@ public class SuppliesManager extends Observable{
 
 
  */
-    void ordinaDaFornitore() { //ordine periodico
+    public void ordinaDaFornitore() { //ordine periodico
         String serie = "";
         int numCapitolo = 0;
         int quantità = 0;
@@ -86,7 +86,7 @@ public class SuppliesManager extends Observable{
                         quantità = 3;
 
                     for (Fumetto f : stockManager.fumetti) {
-                        if (k == f.getCodice()) {
+                        if (k.equals( f.getCodice())) {
                             fumetto = f;
                             serie = f.getSerie();
                         }
@@ -122,10 +122,10 @@ public class SuppliesManager extends Observable{
         Fumetto fumetto = null;
         ActionFigure actionFigure = null;
         for (Key k : stockManager.elementi.keySet()) {
-            if (numSerie == k.getCodiceSerie()) {
+            if (k.getCodiceSerie().equals(numSerie)) {
                 numCapitolo = 0;
                 for (Key k1 : stockManager.elementi.keySet()) {
-                    if (numSerie == k1.getCodiceSerie()) {
+                    if (k1.getCodiceSerie().equals(numSerie)) {
                         if (numCapitolo < k1.getCodiceCapitolo() && k1.getCodiceCapitolo() < 997) //trova l'ultimo capitolo che non è un'action figure
                             numCapitolo = k1.getCodiceCapitolo();
                     }
@@ -134,14 +134,14 @@ public class SuppliesManager extends Observable{
         }
         key.setCodiceCapitolo(numCapitolo);
         for (Fumetto f : stockManager.fumetti) {
-            if (key == f.getCodice())
+            if (key.equals(f.getCodice()))
                 fumetto = f;
         }
         ordine.put(fumetto, 15);
         for (int i = 997; i<1000; i++) {
             key.setCodiceCapitolo(i);
             for (ActionFigure af : stockManager.actionFigures) {
-                if (key == af.getCodice())
+                if (key.equals(af.getCodice()))
                     actionFigure = af;
             }
             ordineAF.put(actionFigure, 2);
@@ -153,8 +153,9 @@ public class SuppliesManager extends Observable{
         for (Iterator i = fumetti.iterator(); i.hasNext(); ) {
             Fumetto fumetto = (Fumetto) i.next();
             Integer quantita = fornitura.get(fumetto);
-            for (int j = 0; j < quantita; j++)
+            for (int j = 0; j < quantita; j++) {
                 stockManager.addFumetto(fumetto);
+            }
         }
     }
 
