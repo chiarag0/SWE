@@ -169,7 +169,7 @@ public class SuppliesManager extends Observable{
         }
     }
 
-    private void riceviNotifica(String titoloSerie){
+    public void riceviNotifica(String titoloSerie){
         stockManager.setCountSeries();
         stockManager.codiceSerie.put(titoloSerie, stockManager.getCountSeries());
         Key key = new Key(stockManager.getCountSeries(), 1);

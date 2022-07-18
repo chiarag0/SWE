@@ -3,6 +3,7 @@ import ComunicazioneCliente.AttivitàClienti;
 import ComunicazioneCliente.Cliente;
 import ComunicazioneCliente.InterfacciaOnline;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 enum mod{
@@ -17,7 +18,7 @@ public class Cassa {
         this.io = io;
     }
 
-    private void effettuaPagamento(mod mod, int somma, int codiceCliente){
+    private void effettuaPagamento(mod mod, int somma, int codiceCliente) throws IOException {
         switch(mod){
             case POS:
                 pagamentoPOS(somma);

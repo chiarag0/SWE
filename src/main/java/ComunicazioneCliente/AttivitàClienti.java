@@ -6,6 +6,7 @@ import StockManagement.Key;
 import SuppliesManagement.SuppliesManager;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class AttivitàClienti {
     public ArrayList<Cliente> clientIscritti = new ArrayList<>();
@@ -25,21 +26,25 @@ public class AttivitàClienti {
         clientIscritti.add(c);
         numClienti++;
         c.setCodice(numClienti);
-        SendEmail.send("BENVENUTO NELLA COMUNITY!!","Ciao "+ c.getNome() + ", confermiamo la tua iscrizione che ti consentirà di diventare un cliente premium, prenotare qualsiasi prodotto e resterai sempre aggiornato dulle novità!", c.getEmail());
+        SendEmail.send("BENVENUTO NELLA COMMUNITY!!","Ciao "+ c.getNome() + ", confermiamo la tua iscrizione che ti consentirà di diventare un cliente premium, prenotare qualsiasi prodotto e resterai sempre aggiornato sulle novità!", c.getEmail());
     }
 
-    public void unsubscribe(Cliente c){
+    public void unsubscribe(String email){
+        Cliente c = null;
         for (Cliente c1: clientIscritti) {
-            if(c.getEmail()==c1.getEmail())
-                clientIscritti.remove(c);
+            if(c1.getEmail().equals(email))
+                c = c1;
         }
+        if(c != null)
+            clientIscritti.remove(c);
     }
 
     public void subscribeSerie(Cliente c,Integer codiceSerie){
-        ArrayList<Cliente> clienti;
+        ArrayList<Cliente> clienti = new ArrayList<>();
         for (Cliente c1: clientIscritti) {
-            if (c == c1){
-                clienti = fornitore.iscrizioni.get(codiceSerie);
+            if (c.getCodice() == c1.getCodice()){
+                if(fornitore.iscrizioni.containsKey(codiceSerie))
+                    clienti = fornitore.iscrizioni.get(codiceSerie);
                 clienti.add(c);
                 fornitore.iscrizioni.put(codiceSerie, clienti);
             }
@@ -47,10 +52,11 @@ public class AttivitàClienti {
     }
 
     public void unsubscribeSerie(Cliente c,Integer codiceSerie){
-        ArrayList<Cliente> clienti;
+        ArrayList<Cliente> clienti = new ArrayList<>();
         for (Cliente c1: clientIscritti) {
-            if (c == c1){
-                clienti = fornitore.iscrizioni.get(codiceSerie);
+            if (c.getCodice() == c1.getCodice()){
+                if(fornitore.iscrizioni.containsKey(codiceSerie))
+                    clienti = fornitore.iscrizioni.get(codiceSerie);
                 clienti.remove(c);
                 fornitore.iscrizioni.put(codiceSerie, clienti);
             }
