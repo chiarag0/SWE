@@ -19,22 +19,24 @@ import javax.swing.*;
 
 //new class that implements the ActionListener interface
 public class InterfacciaOnline implements ActionListener {
-    private ArrayList<Elemento> catalogoOnline;
     private AttivitàClienti ac;
     ArrayList<JButton> buttons = new ArrayList<>();
+    ArrayList<JButton> buttonsChapters = new ArrayList<>();
     JFrame frm;
+    JFrame frm1;
     JTextArea txt;
     ArrayList<String> series = new ArrayList<>();
     ArrayList<String> seriesPre = new ArrayList<>();
-    ArrayList<String> elementsSeriePre = new ArrayList<>();
-    ArrayList<String> elementsNPre = new ArrayList<>();
-    ArrayList<Integer> elementsN = new ArrayList<>();
-    ArrayList<String> elementsSerie = new ArrayList<>();
+    ArrayList<String> chapters = new ArrayList<>();
     Dimension d;
     Dimension dBtn;
     StockManager magazzino;
     SuppliesManager fornitore = SuppliesManager.getInstance(ac);
     public Cliente cliente;
+    private boolean booking;
+    private boolean selectCap;
+    int serie;
+    ArrayList<Key> codici = new ArrayList<>();
 
     public InterfacciaOnline(AttivitàClienti ac) {
         d = new Dimension(300, 300);
@@ -100,6 +102,7 @@ public class InterfacciaOnline implements ActionListener {
         Cliente c1 = new Cliente(iscrizione.nome, iscrizione.cognome, iscrizione.mail, 0);
         this.cliente = c;
         ac.subscribe(c1);
+        c.setCodice(ac.numClienti);
     }
 
     protected void cancellaIscrizione() throws IOException {
@@ -114,42 +117,28 @@ public class InterfacciaOnline implements ActionListener {
     }
 
     public void bookElement() throws IOException {
-        subscribeMeSerie();
+        codici.clear();
+        this.booking = true;
+        selectSeries();
+        magazzino.prenotaElementi(codici,cliente);
     }
 
-    public void subscribeMeSerie() throws IOException {
-        if (cliente == null)
-            accedi();
-        series.clear();
-        buttons.clear();
-        Set keys = fornitore.iscrizioni.keySet();
-        for (Iterator i = keys.iterator(); i.hasNext(); ) {
-            Integer codice = (Integer) i.next();
-            for (Cliente c : fornitore.iscrizioni.get(codice)) {
-                if (c.getEmail().equals(cliente.getEmail())) {
-                    Set keys1 = magazzino.codiceSerie.keySet();
-                    for (Iterator j = keys1.iterator(); j.hasNext(); ) {
-                        String titolo = (String) j.next();
-                        if (magazzino.codiceSerie.get(titolo).equals(codice))
-                            series.add(titolo);
-                    }
-                    break;
-                }
-            }
-        }
-        seriesPre = (ArrayList<String>) series.clone();
-        Set keys2 = magazzino.codiceSerie.keySet();
+    public void selectChapters(String titolo){
+        buttonsChapters.clear();
+        chapters.clear();
         JButton btn;
         btn = new JButton("Fatto!");
         btn.setBackground(Color.GREEN);
         btn.addActionListener(this);
-        buttons.add(btn);
-        for (Object o : keys2) {
-            String titolo = (String) o;
-            JButton btn1;
-            btn1 = new JButton(titolo);
-            btn1.addActionListener(this);
-            buttons.add(btn1);
+        buttonsChapters.add(btn);
+        for (Fumetto f : magazzino.fumetti) {
+            if(Objects.equals(magazzino.codiceSerie.get(titolo), f.getCodice().getCodiceSerie())) {
+                String title = Integer.toString(f.getCapitolo());
+                JButton btn1;
+                btn1 = new JButton(title);
+                btn1.addActionListener(this);
+                buttonsChapters.add(btn1);
+            }
         }
         frm = new JFrame("SERIE");
         frm.setLocation(600, 100);
@@ -157,10 +146,9 @@ public class InterfacciaOnline implements ActionListener {
         frm.setLayout(new GridLayout(magazzino.codiceSerie.size() / 2 + 1, 2));
         txt = new JTextArea(1, 2);
         txt.setLineWrap(false);
-        txt.setText(seriesPre.toString());
         frm.add(txt);
         for (int i = 0; i < magazzino.codiceSerie.size() + 1; i++)
-            frm.add(buttons.get(i));
+            frm.add(buttonsChapters.get(i));
         frm.pack();
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frm.setVisible(true);
@@ -169,27 +157,16 @@ public class InterfacciaOnline implements ActionListener {
             a = 0;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent ev) {
-        JButton b = (JButton) ev.getSource();
-        if (Objects.equals(b.getText(), "Fatto!")) {
-            for (String s : series) {
-                if (!seriesPre.contains(s))
-                    ac.subscribeSerie(cliente, magazzino.codiceSerie.get(s));
-            }
-            for (String s : seriesPre) {
-                if (!series.contains(s))
-                    ac.unsubscribeSerie(cliente, magazzino.codiceSerie.get(s));
-            }
-            frm.dispose();
+    public void subscribeMeSerie() throws IOException {
+        this.booking = false;
+        selectSeries();
+        for (String s : series) {
+            if (!seriesPre.contains(s))
+                ac.subscribeSerie(cliente, magazzino.codiceSerie.get(s));
         }
-        if (Objects.equals(b.getText(), "PRENOTA!")) {
-            frm.dispose();
-            if (series.contains(b.getText()))
-                series.remove(b.getText());
-            else
-                series.add(b.getText());
-            txt.setText(series.toString());
+        for (String s : seriesPre) {
+            if (!series.contains(s))
+                ac.unsubscribeSerie(cliente, magazzino.codiceSerie.get(s));
         }
     }
 
@@ -236,7 +213,7 @@ public class InterfacciaOnline implements ActionListener {
             email = new JTextField();
             email.setBounds(100, 125, 193, 28);
             panel.add(email);
-            button = new JButton("ISCRIVIMI!");
+            button = new JButton("ENTRA!");
             button.setBounds(100, 162, 90, 25);
             button.setForeground(Color.WHITE);
             button.setBackground(Color.BLACK);
@@ -268,7 +245,7 @@ public class InterfacciaOnline implements ActionListener {
         Accesso(String text) {
             JPanel panel = new JPanel();
             panel.setLayout(null);
-            emailLabel = new JLabel("Inserire EMail");
+            emailLabel = new JLabel("EMail");
             emailLabel.setBounds(100, 3, 70, 20);
             panel.add(emailLabel);
             frame = new JFrame();
@@ -300,47 +277,96 @@ public class InterfacciaOnline implements ActionListener {
         }
     }
 
-    class Prenota implements ActionListener {
-        private static JLabel capitoloLabel;
-        private static JTextField capitolo;
-        //create a button
-        JButton button;
-        //create a frame
-        JFrame frame;
-        //create a text area
-        String mail;
 
-        Prenota(String text) {
-            JPanel panel = new JPanel();
-            panel.setLayout(null);
-            capitoloLabel = new JLabel("Inserire EMail");
-            capitoloLabel.setBounds(100, 3, 70, 20);
-            panel.add(capitoloLabel);
-            frame = new JFrame();
-            frame.setEnabled(true);
-            frame.setTitle(text);
-            frame.setLocation(new Point(500, 300));
-            frame.add(panel);
-            frame.setSize(new Dimension(400, 400));
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-            capitolo = new JTextField();
-            capitolo.setBounds(100, 25, 193, 28);
-            panel.add(capitolo);
-            button = new JButton("Login");
-            button.setBounds(100, 162, 90, 25);
-            button.setForeground(Color.WHITE);
-            button.setBackground(Color.BLACK);
-            button.addActionListener(this);
-            panel.add(button);
-
+    public void selectSeries() throws IOException {
+        if (cliente == null)
+            accedi();
+        series.clear();
+        buttons.clear();
+        if(!booking){
+            Set keys = fornitore.iscrizioni.keySet();
+            for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                Integer codice = (Integer) i.next();
+                for (Cliente c : fornitore.iscrizioni.get(codice)) {
+                    if (c.getEmail().equals(cliente.getEmail())) {
+                        Set keys1 = magazzino.codiceSerie.keySet();
+                        for (Iterator j = keys1.iterator(); j.hasNext(); ) {
+                            String titolo = (String) j.next();
+                            if (magazzino.codiceSerie.get(titolo).equals(codice))
+                                series.add(titolo);
+                        }
+                        break;
+                    }
+                }
+            }
         }
+        seriesPre = (ArrayList<String>) series.clone();
+        Set keys2 = magazzino.codiceSerie.keySet();
+        JButton btn;
+        btn = new JButton("Fatto!");
+        btn.setBackground(Color.GREEN);
+        btn.addActionListener(this);
+        buttons.add(btn);
+        for (Object o : keys2) {
+            String titolo = (String) o;
+            JButton btn1;
+            btn1 = new JButton(titolo);
+            btn1.addActionListener(this);
+            buttons.add(btn1);
+        }
+        frm1 = new JFrame("SERIE");
+        frm1.setLocation(600, 100);
+        frm1.setMinimumSize(d);
+        frm1.setLayout(new GridLayout(magazzino.codiceSerie.size() / 2 + 1, 2));
+        txt = new JTextArea(1, 2);
+        txt.setLineWrap(false);
+        txt.setText(seriesPre.toString());
+        frm1.add(txt);
+        for (int i = 0; i < magazzino.codiceSerie.size() + 1; i++)
+            frm1.add(buttons.get(i));
+        frm1.pack();
+        frm1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frm1.setVisible(true);
+        int a;
+        while (frm1.isActive())
+            a = 0;
+    }
 
-        //action to be performed on clicking the button
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            //capitolo = capitolo.getText();
-            frame.dispose();
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        JButton b = (JButton) ev.getSource();
+        if (!selectCap) {
+            if (Objects.equals(b.getText(), "Fatto!")) {
+                frm.dispose();
+            } else {
+                if (booking) {
+                    serie = magazzino.codiceSerie.get(b.getText());
+                    selectCap = true;
+                    selectChapters(b.getText());
+                }else {
+                    if (!series.contains(b.getText()))
+                        series.add(b.getText());
+                    else
+                        series.remove(b.getText());
+                }
+            }
+            if(!booking)
+                txt.setText(series.toString());
+        }else{
+            if (Objects.equals(b.getText(), "Fatto!")) {
+                for (String s : chapters) { //TODO sistemare la prenotazione di un oggetto fatta due volte dallo stesso cliente
+                    Key chiave = new Key(serie,Integer.parseInt(s));
+                    codici.add(chiave);
+                }
+                selectCap = false;
+                frm1.dispose();
+            } else {
+                if (!chapters.contains(b.getText()))
+                    chapters.add(b.getText());
+                else
+                    chapters.remove(b.getText());
+            }
+            txt.setText(chapters.toString());
         }
     }
 }

@@ -11,7 +11,7 @@ import java.util.Objects;
 public class AttivitàClienti {
     public ArrayList<Cliente> clientIscritti = new ArrayList<>();
     private final HashMap<Integer, Integer> interesse = new HashMap<>(); // codice serie valore di interesse
-    private int numClienti;
+    int numClienti;
     private final StockManager magazzino=  StockManager.getInstance();
     private final SuppliesManager fornitore =  SuppliesManager.getInstance(this);
     private static AttivitàClienti instance = null;
